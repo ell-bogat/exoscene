@@ -4,8 +4,8 @@ Installation: `pip install exoscene`
 
 **exoscene** is a library of classes and utility functions for simulating
 direct images of exoplanetary systems. The package was developed by Neil
-Zimmerman (NASA/GSFC), with source code contributions from Maxime Rizzo and
-Christopher Stark. This work was funded in part by a WFIRST CGI Science
+Zimmerman (NASA/GSFC), with source code contributions from Maxime Rizzo,
+Christopher Stark, and Ell Bogat. This work was funded in part by a WFIRST/Roman Science
 Investigation Team contract (PI: Margaret Turnbull). 
 
 **exoscene** makes significant use of the Astropy, NumPy, SciPy, and 
@@ -50,4 +50,4 @@ taking into account position-dependent properties included in the model.
 an image with photon counting noise, read noise, and dark current, for a given 
 integration time.
 
-
+Copyright © 2020 United States Government as represented by the Administrator of the National Aeronautics and Space Administration.  All Other Rights Reserved.
