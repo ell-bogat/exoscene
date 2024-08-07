@@ -224,10 +224,18 @@ def get_hires_psf_at_xy_os9(offax_psfs, offsets_as, angles,
     return reflect_psf
 
 def get_hires_psf_at_xy_os11(offax_psfs, offsets_as, angles,
-                            pixscale_as, delx_as, dely_as, cx):
+                             pixscale_as, delx_as, dely_as):
     '''
-    Subroutine to shift and rotate off-axis PSF model
+    Subroutine to generate and shift off-axis PSF model
     to arbitrary array position
+
+    Args:
+        offax_psfs: array of hires psf models
+        offsets_as: list of offsets in arcsec for each model
+        angles: list of angles in degrees for each model
+        pixscale_as: pixel scale of hires psf model in arcsec
+        delx_as: desired relative source offset in x-direction arcsec
+        dely_as: desired relative source offset in x-direction arcsec
     '''
     r_as = np.sqrt(delx_as**2 + dely_as**2)
     theta = np.rad2deg(np.arctan2(dely_as, delx_as))
@@ -236,39 +244,17 @@ def get_hires_psf_at_xy_os11(offax_psfs, offsets_as, angles,
     dr_as = r_as - offsets_as[oi] # radial shift needed in arcseconds
     dr_p = dr_as / pixscale_as # radial shift needed in pixels    
 
-    if theta >= 0 and theta < 90: # in first quadrant
-        theta_q = theta
-    elif theta >= 90 and theta < 180: # second quadrant
-        theta_q = 180 - theta
-    elif theta >= 180 and theta < 270: # third quadrant
-        theta_q = theta - 180
-    else: # fourth quadrant
-        theta_q = 360 - theta
-    ai = np.argmin(np.abs(theta_q - angles))
-    dtheta = theta_q - angles[ai]
-    dx_p = dr_p * np.cos(np.deg2rad(theta_q))
-    dy_p = dr_p * np.sin(np.deg2rad(theta_q))
+    ai = np.argmin(np.abs(theta - angles))
+    dtheta = theta - angles[ai]
+    dx_p = dr_p * np.cos(np.deg2rad(dtheta))
+    dy_p = dr_p * np.sin(np.deg2rad(dtheta))
 
-    rot_psf = skimage.transform.rotate(
-            offax_psfs[ai, oi],
-            angle = -dtheta,
-            order = 1, resize = False,
-            center = (cx, cx))
-    shift_rot_psf = scipy.ndimage.interpolation.shift(
-            rot_psf, (dy_p, dx_p),
+    shift_psf = scipy.ndimage.interpolation.shift(
+            offax_psfs[ai, oi], (dy_p, dx_p),
             order = 1, prefilter = False,
             mode = 'constant', cval = 0)
 
-    if theta >= 0 and theta < 90: # in first quadrant
-        reflect_psf = shift_rot_psf
-    elif theta >= 90 and theta < 180: # second quadrant
-        reflect_psf = shift_rot_psf[:, ::-1]
-    elif theta >= 180 and theta < 270: # third quadrant
-        reflect_psf = shift_rot_psf[::-1, ::-1]
-    else: # fourth quadrant
-        reflect_psf = shift_rot_psf[::-1, :]
-
-    return reflect_psf
+    return shift_psf
 
 def xy_to_psf_odd(x, y, quad_cube):  # for odd image array width
     cx = quad_cube.shape[-1] // 2
