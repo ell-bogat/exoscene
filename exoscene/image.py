@@ -235,7 +235,7 @@ def get_hires_psf_at_xy_os11(offax_psfs, offsets_as, angles,
         angles: list of angles in degrees for each model
         pixscale_as: pixel scale of hires psf model in arcsec
         delx_as: desired relative source offset in x-direction arcsec
-        dely_as: desired relative source offset in x-direction arcsec
+        dely_as: desired relative source offset in y-direction arcsec
     '''
     r_as = np.sqrt(delx_as**2 + dely_as**2)
     theta = np.rad2deg(np.arctan2(dely_as, delx_as))
